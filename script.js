@@ -65,7 +65,8 @@ const closeNav = () => {
 
 const setActiveCase = (target) => {
   caseTabs.forEach((tab) => {
-    tab.classList.toggle("is-active", tab.dataset.caseTarget === target);
+    const isActive = tab.dataset.caseTarget === target;
+    tab.classList.toggle("is-active", isActive);
   });
 
   casePanels.forEach((panel) => {
