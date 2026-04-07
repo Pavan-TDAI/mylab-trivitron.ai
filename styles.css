@@ -1613,7 +1613,7 @@ button {
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 860px), (hover: none) and (pointer: coarse) and (max-width: 1024px) {
   .nav-toggle {
     display: inline-flex;
     z-index: 5;
