@@ -55,17 +55,20 @@
 
     <main id="top">
       <section class="hero" data-reveal>
-        <video
-          class="hero__video"
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="metadata"
-          poster="9573911-uhd_4096_2160_25fps.mp4.png"
-        >
-          <source src="9573911-uhd_4096_2160_25fps.mp4" type="video/mp4">
-        </video>
+        <div class="hero__media hero__media--animated" aria-hidden="true">
+          <div class="hero__media-slide">
+            <img src="assets/website images/Turnkey-Solution-Final-banner.jpg" alt="" width="1920" height="1150" fetchpriority="high" decoding="async">
+          </div>
+          <div class="hero__media-slide">
+            <img src="assets/website images/Solution-Web-banner.jpg" alt="" width="1920" height="1150" decoding="async">
+          </div>
+          <div class="hero__media-slide">
+            <img src="assets/website images/Clinical-Page-Banner.jpg" alt="" width="1920" height="1150" decoding="async">
+          </div>
+          <div class="hero__media-slide">
+            <img src="assets/website images/Disease-banner.jpg" alt="" width="1920" height="1150" decoding="async">
+          </div>
+        </div>
         <div class="hero__overlay"></div>
         <div class="hero__inner">
           <div class="hero__copy">
@@ -160,7 +163,7 @@
                 </a>
               </div>
               <div class="case-panel__visual">
-                <img src="assets/products/product-tb-program-clean-updated.png" alt="Tuberculosis program visual">
+                <img class="case-panel__image--feature" src="assets/website images/Tuberculosis_lungs-tb-fb.jpg" alt="Tuberculosis program lungs diagnostic visual" width="1347" height="910" decoding="async">
                 <div class="case-panel__stats">
                   <span>Program-ready</span>
                   <span>Molecular detection</span>
@@ -182,7 +185,7 @@
                 </a>
               </div>
               <div class="case-panel__visual">
-                <img src="assets/products/product-blood-screening.png" alt="Blood screening visual">
+                <img src="assets/website images/Blood Screening_nat-feature-kit.png" alt="Blood screening kit visual" width="514" height="388" decoding="async">
                 <div class="case-panel__stats">
                   <span>Blood safety</span>
                   <span>Clinical screening</span>
@@ -204,7 +207,7 @@
                 </a>
               </div>
               <div class="case-panel__visual">
-                <img src="assets/products/product-compact-xl.png" alt="Compact XL visual">
+                <img src="assets/website images/compactxl-img.png" alt="Compact XL instrument visual" width="800" height="496" decoding="async">
                 <div class="case-panel__stats">
                   <span>Compact footprint</span>
                   <span>Sample to answer</span>
@@ -226,7 +229,7 @@
                 </a>
               </div>
               <div class="case-panel__visual">
-                <img src="assets/products/product-compact-dx.png" alt="Compact DX visual">
+                <img src="assets/website images/CompactDX-front-new-img.png" alt="Compact DX instrument visual" width="500" height="781" decoding="async">
                 <div class="case-panel__stats">
                   <span>Automation</span>
                   <span>Extraction + RT-PCR</span>
@@ -258,10 +261,8 @@
                   seamlessly connecting innovation, distribution, and clinical adoption.
                 </p>
               </div>
-              <div class="feature-card__visual feature-card__visual--video">
-                <video autoplay muted loop playsinline preload="metadata" poster="3196465-uhd_3840_2160_25fps.mp4.png">
-                  <source src="3196465-uhd_3840_2160_25fps.mp4" type="video/mp4">
-                </video>
+              <div class="feature-card__visual feature-card__visual--immersive">
+                <img class="feature-card__poster" src="assets/website images/Key diff_integrated diagnostic platform.jpg" alt="Integrated diagnostic platform visual" width="1920" height="1283" decoding="async">
                 <div class="feature-float feature-float--primary">
                   <strong>Program orchestration</strong>
                   <span>Screening, rollout, and operations moving through one diagnostic layer.</span>
@@ -278,12 +279,15 @@
                   product development and market access.
                 </p>
               </div>
-              <div class="feature-card__visual feature-card__visual--grid">
-                <div class="mini-card">
-                  <img src="3196465-uhd_3840_2160_25fps.mp4.png" alt="Laboratory team workflow preview">
-                </div>
-                <div class="mini-card">
-                  <img src="9573911-uhd_4096_2160_25fps.mp4.png" alt="Laboratory platform preview">
+              <div class="feature-card__visual feature-card__visual--stacked">
+                <img class="feature-card__poster" src="assets/website images/Key_Diff_Innovation engines plus delivery.jpg" alt="Innovation and delivery engine visual" width="1550" height="812" decoding="async">
+                <div class="feature-card__stack">
+                  <div class="mini-card">
+                    <img src="assets/website images/compactXL-media-img.png" alt="Compact XL deployment preview" width="600" height="450" decoding="async">
+                  </div>
+                  <div class="mini-card">
+                    <img src="assets/website images/mobilevan-media-img.png" alt="Mobile diagnostics deployment preview" width="600" height="450" decoding="async">
+                  </div>
                 </div>
               </div>
             </article>
@@ -297,7 +301,7 @@
                 </p>
               </div>
               <div class="feature-card__visual feature-card__visual--dashboard">
-                <img class="feature-card__poster" src="9573911-uhd_4096_2160_25fps.mp4.png" alt="Laboratory preview">
+                <img class="feature-card__poster" src="assets/website images/Key_Diff_Ecosystem ownership.jpg" alt="Diagnostics ecosystem ownership visual" width="1920" height="1150" decoding="async">
                 <div class="feature-float feature-float--secondary">
                   <strong>Deployment view</strong>
                   <span>Hospitals, labs, and program teams aligned through one platform lens.</span>
@@ -320,12 +324,15 @@
                 </p>
               </div>
               <div class="feature-card__visual feature-card__visual--modules">
-                <div class="module-chip">National programs</div>
-                <div class="module-chip">Screening initiatives</div>
-                <div class="module-chip">Hospital systems</div>
-                <div class="module-chip">Laboratory networks</div>
-                <div class="module-chip">Point-of-care access</div>
-                <div class="module-chip">Rapid response</div>
+                <img class="feature-card__poster" src="assets/website images/Key_Diff_National-scale public health.jpg" alt="National scale public health visual" width="1800" height="1200" decoding="async">
+                <div class="feature-card__module-cloud">
+                  <div class="module-chip">National programs</div>
+                  <div class="module-chip">Screening initiatives</div>
+                  <div class="module-chip">Hospital systems</div>
+                  <div class="module-chip">Laboratory networks</div>
+                  <div class="module-chip">Point-of-care access</div>
+                  <div class="module-chip">Rapid response</div>
+                </div>
               </div>
             </article>
           </div>
@@ -534,7 +541,7 @@
               </div>
             </div>
             <div class="cta-panel__visual">
-              <img src="3196465-uhd_3840_2160_25fps.mp4.png" alt="Laboratory diagnostics preview">
+              <img src="assets/website images/HTP-Video-banner.jpg" alt="Diagnostics platform banner" width="1550" height="900" decoding="async">
             </div>
           </div>
         </div>

@@ -16,7 +16,6 @@ const revealItems = [...document.querySelectorAll("[data-reveal]")];
 
 let showcaseIndex = 0;
 let showcaseTimer = null;
-let lastScrollY = window.scrollY;
 let dragStartX = 0;
 let dragStartY = 0;
 let dragDeltaX = 0;
@@ -28,26 +27,9 @@ const setHeaderState = () => {
   }
 
   const currentScrollY = window.scrollY;
-  const scrollDelta = currentScrollY - lastScrollY;
 
   header.classList.toggle("is-scrolled", currentScrollY > 12);
-
-  if (header.classList.contains("is-open")) {
-    header.classList.remove("is-hidden");
-    lastScrollY = currentScrollY;
-    return;
-  }
-
-  if (Math.abs(scrollDelta) > 6) {
-    const isScrollingDown = scrollDelta > 0;
-    header.classList.toggle("is-hidden", isScrollingDown && currentScrollY > 140);
-  }
-
-  if (currentScrollY <= 16) {
-    header.classList.remove("is-hidden");
-  }
-
-  lastScrollY = currentScrollY;
+  header.classList.remove("is-hidden");
 };
 
 const toggleNav = () => {
@@ -145,6 +127,10 @@ const handleShowcasePointerDown = (event) => {
     return;
   }
 
+  if (event.target instanceof Element && event.target.closest(".showcase-card__body")) {
+    return;
+  }
+
   beginShowcaseDrag(event.clientX, event.clientY);
   showcaseTrack?.setPointerCapture?.(event.pointerId);
 };
@@ -153,6 +139,10 @@ const handleShowcaseTouchStart = (event) => {
   const touch = event.touches?.[0];
 
   if (!touch) {
+    return;
+  }
+
+  if (event.target instanceof Element && event.target.closest(".showcase-card__body")) {
     return;
   }
 
@@ -230,6 +220,25 @@ const sleep = (ms) => new Promise((resolve) => {
   window.setTimeout(resolve, ms);
 });
 
+const reserveHeroTypingSpace = () => {
+  const heroTypingElements = [...heroTitleLines, heroTypeParagraph].filter(Boolean);
+
+  heroTypingElements.forEach((element) => {
+    const finalText = element.dataset.text || element.textContent || "";
+    const previousText = element.textContent;
+
+    element.textContent = finalText;
+
+    const measuredHeight = Math.ceil(element.getBoundingClientRect().height);
+
+    if (measuredHeight > 0) {
+      element.style.minHeight = `${measuredHeight}px`;
+    }
+
+    element.textContent = previousText;
+  });
+};
+
 const typeIntoElement = async (element, text, delay = 34) => {
   if (!element) {
     return;
@@ -250,6 +259,16 @@ const setupHeroTyping = async () => {
   if (!heroTitleLines.length) {
     return;
   }
+
+  if (document.fonts?.ready) {
+    try {
+      await document.fonts.ready;
+    } catch (_error) {
+      // Continue with typing even if font readiness cannot be resolved.
+    }
+  }
+
+  reserveHeroTypingSpace();
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     heroCopy?.classList.add("is-typing-ready");
