@@ -1647,7 +1647,9 @@ button {
   .nav-dropdown__trigger {
     font-size: 0.76rem;
   }
+}
 
+@media (max-width: 860px) {
   .contact-panels {
     grid-template-columns: 1fr;
     gap: 1.8rem;
