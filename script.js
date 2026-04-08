@@ -13,6 +13,10 @@ const showcaseCards = showcase ? [...showcase.querySelectorAll(".showcase-card")
 const prevShowcase = showcase?.querySelector(".showcase__arrow--prev");
 const nextShowcase = showcase?.querySelector(".showcase__arrow--next");
 const revealItems = [...document.querySelectorAll("[data-reveal]")];
+const contactForm = document.querySelector("#contact-form");
+const contactFormNote = contactForm?.querySelector(".contact-form__note");
+const contactFormSubmit = contactForm?.querySelector('button[type="submit"]');
+const contactFormFrame = document.querySelector("#google-form-response");
 
 let showcaseIndex = 0;
 let showcaseTimer = null;
@@ -20,6 +24,11 @@ let dragStartX = 0;
 let dragStartY = 0;
 let dragDeltaX = 0;
 let isDraggingShowcase = false;
+let isContactFormSubmitting = false;
+let contactFormResetTimer = null;
+let contactFormFallbackTimer = null;
+
+const contactFormDefaultNote = contactFormNote?.innerHTML || "";
 
 const setHeaderState = () => {
   if (!header) {
@@ -327,6 +336,75 @@ const setupRevealAnimations = () => {
   revealItems.forEach((item) => observer.observe(item));
 };
 
+const updateContactFormNote = (state, markup) => {
+  if (!contactFormNote) {
+    return;
+  }
+
+  contactFormNote.classList.remove("is-pending", "is-success", "is-error");
+
+  if (state) {
+    contactFormNote.classList.add(`is-${state}`);
+  }
+
+  contactFormNote.innerHTML = markup;
+};
+
+const resetContactFormNote = () => {
+  window.clearTimeout(contactFormResetTimer);
+  updateContactFormNote("", contactFormDefaultNote);
+};
+
+const finishContactFormSubmission = () => {
+  if (!contactForm || !isContactFormSubmitting) {
+    return;
+  }
+
+  isContactFormSubmitting = false;
+  window.clearTimeout(contactFormFallbackTimer);
+
+  contactForm.classList.remove("is-submitting");
+
+  if (contactFormSubmit) {
+    contactFormSubmit.disabled = false;
+  }
+
+  contactForm.reset();
+  updateContactFormNote(
+    "success",
+    'Thanks. Your details were saved to our Google Form responses. <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0sI3rWC5Ps2SN5pcJh52KucSnubSz2Xy3E0TEglMyw4T5xg/viewform?usp=publish-editor" target="_blank" rel="noreferrer">View the published form</a>.'
+  );
+
+  contactFormResetTimer = window.setTimeout(resetContactFormNote, 5200);
+};
+
+const setupContactForm = () => {
+  if (!contactForm) {
+    return;
+  }
+
+  contactForm.addEventListener("submit", () => {
+    resetContactFormNote();
+    isContactFormSubmitting = true;
+    contactForm.classList.add("is-submitting");
+
+    if (contactFormSubmit) {
+      contactFormSubmit.disabled = true;
+    }
+
+    updateContactFormNote("pending", "Saving your details to our Google Form responses...");
+
+    window.clearTimeout(contactFormFallbackTimer);
+    contactFormFallbackTimer = window.setTimeout(() => {
+      finishContactFormSubmission();
+    }, 4500);
+  });
+
+  contactFormFrame?.addEventListener("load", () => {
+    finishContactFormSubmission();
+  });
+};
+
 const init = () => {
   heroSection?.classList.add("is-visible");
   setHeaderState();
@@ -387,6 +465,7 @@ const init = () => {
 
   setupRevealAnimations();
   setupHeroTyping();
+  setupContactForm();
 };
 
 init();
