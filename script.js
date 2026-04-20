@@ -7,23 +7,13 @@ const heroTitleLines = [...document.querySelectorAll(".hero__title-line")];
 const heroTypeParagraph = document.querySelector(".hero__type-paragraph");
 const caseTabs = [...document.querySelectorAll(".case-tab")];
 const casePanels = [...document.querySelectorAll(".case-panel")];
-const showcase = document.querySelector(".showcase");
-const showcaseTrack = showcase?.querySelector(".showcase__track");
-const showcaseCards = showcase ? [...showcase.querySelectorAll(".showcase-card")] : [];
-const prevShowcase = showcase?.querySelector(".showcase__arrow--prev");
-const nextShowcase = showcase?.querySelector(".showcase__arrow--next");
 const revealItems = [...document.querySelectorAll("[data-reveal]")];
+const leadershipCarousel = document.querySelector("[data-leadership-carousel]");
 const contactForm = document.querySelector("#contact-form");
 const contactFormNote = contactForm?.querySelector(".contact-form__note");
 const contactFormSubmit = contactForm?.querySelector('button[type="submit"]');
 const contactFormFrame = document.querySelector("#google-form-response");
 
-let showcaseIndex = 0;
-let showcaseTimer = null;
-let dragStartX = 0;
-let dragStartY = 0;
-let dragDeltaX = 0;
-let isDraggingShowcase = false;
 let isContactFormSubmitting = false;
 let contactFormResetTimer = null;
 let contactFormFallbackTimer = null;
@@ -63,166 +53,6 @@ const setActiveCase = (target) => {
   casePanels.forEach((panel) => {
     panel.classList.toggle("is-active", panel.dataset.casePanel === target);
   });
-};
-
-const setShowcaseState = (index) => {
-  showcaseIndex = (index + showcaseCards.length) % showcaseCards.length;
-
-  showcaseCards.forEach((card, cardIndex) => {
-    card.classList.remove("is-active", "is-prev", "is-next");
-
-    if (cardIndex === showcaseIndex) {
-      card.classList.add("is-active");
-      return;
-    }
-
-    if (cardIndex === (showcaseIndex - 1 + showcaseCards.length) % showcaseCards.length) {
-      card.classList.add("is-prev");
-      return;
-    }
-
-    if (cardIndex === (showcaseIndex + 1) % showcaseCards.length) {
-      card.classList.add("is-next");
-    }
-  });
-};
-
-const updateShowcaseHeight = () => {
-  if (!showcase || !showcaseCards.length) {
-    return;
-  }
-
-  const topOffset = 82;
-  const compactViewport = window.matchMedia("(max-width: 860px)").matches;
-  const extraSpace = compactViewport ? 140 : 40;
-  const tallestCard = showcaseCards.reduce((maxHeight, card) => {
-    return Math.max(maxHeight, card.offsetHeight);
-  }, 0);
-
-  const targetHeight = Math.max(
-    compactViewport ? 680 : 520,
-    Math.ceil(topOffset + tallestCard + extraSpace)
-  );
-
-  showcase.style.minHeight = `${targetHeight}px`;
-};
-
-const restartShowcaseTimer = () => {
-  if (!showcaseCards.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return;
-  }
-
-  window.clearInterval(showcaseTimer);
-  showcaseTimer = window.setInterval(() => {
-    setShowcaseState(showcaseIndex + 1);
-  }, 4200);
-};
-
-const stopShowcaseTimer = () => {
-  window.clearInterval(showcaseTimer);
-};
-
-const beginShowcaseDrag = (clientX, clientY) => {
-  dragStartX = clientX;
-  dragStartY = clientY;
-  dragDeltaX = 0;
-  isDraggingShowcase = true;
-  showcase?.classList.add("is-dragging");
-  stopShowcaseTimer();
-};
-
-const handleShowcasePointerDown = (event) => {
-  if (event.pointerType === "mouse" && event.button !== 0) {
-    return;
-  }
-
-  if (event.target instanceof Element && event.target.closest(".showcase-card__body")) {
-    return;
-  }
-
-  beginShowcaseDrag(event.clientX, event.clientY);
-  showcaseTrack?.setPointerCapture?.(event.pointerId);
-};
-
-const handleShowcaseTouchStart = (event) => {
-  const touch = event.touches?.[0];
-
-  if (!touch) {
-    return;
-  }
-
-  if (event.target instanceof Element && event.target.closest(".showcase-card__body")) {
-    return;
-  }
-
-  beginShowcaseDrag(touch.clientX, touch.clientY);
-};
-
-const updateShowcaseDrag = (clientX) => {
-  dragDeltaX = clientX - dragStartX;
-};
-
-const finishShowcaseDrag = (clientX, clientY) => {
-  if (!isDraggingShowcase) {
-    return;
-  }
-
-  const deltaX = clientX - dragStartX;
-  const deltaY = clientY - dragStartY;
-
-  if (Math.abs(deltaX) > 42 && Math.abs(deltaX) > Math.abs(deltaY)) {
-    if (deltaX < 0) {
-      setShowcaseState(showcaseIndex + 1);
-    } else {
-      setShowcaseState(showcaseIndex - 1);
-    }
-  }
-
-  showcase?.classList.remove("is-dragging");
-  isDraggingShowcase = false;
-  restartShowcaseTimer();
-};
-
-const handleShowcasePointerMove = (event) => {
-  if (!isDraggingShowcase) {
-    return;
-  }
-
-  updateShowcaseDrag(event.clientX);
-};
-
-const handleShowcasePointerUp = (event) => {
-  finishShowcaseDrag(event.clientX, event.clientY);
-};
-
-const handleShowcasePointerCancel = () => {
-  if (!isDraggingShowcase) {
-    return;
-  }
-
-  showcase?.classList.remove("is-dragging");
-  isDraggingShowcase = false;
-  restartShowcaseTimer();
-};
-
-const handleShowcaseTouchMove = (event) => {
-  const touch = event.touches?.[0];
-
-  if (!touch || !isDraggingShowcase) {
-    return;
-  }
-
-  updateShowcaseDrag(touch.clientX);
-};
-
-const handleShowcaseTouchEnd = (event) => {
-  const touch = event.changedTouches?.[0];
-
-  if (!touch) {
-    return;
-  }
-
-  finishShowcaseDrag(touch.clientX, touch.clientY);
 };
 
 const sleep = (ms) => new Promise((resolve) => {
@@ -405,6 +235,250 @@ const setupContactForm = () => {
   });
 };
 
+const setupLeadershipCarousel = () => {
+  if (!leadershipCarousel) {
+    return;
+  }
+
+  const track = leadershipCarousel.querySelector("[data-carousel-track]");
+  const prevButton = leadershipCarousel.querySelector("[data-carousel-prev]");
+  const nextButton = leadershipCarousel.querySelector("[data-carousel-next]");
+  const originalCards = [...(track?.children || [])].map((card) => card.cloneNode(true));
+
+  if (!track || originalCards.length < 2) {
+    prevButton?.setAttribute("hidden", "");
+    nextButton?.setAttribute("hidden", "");
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let currentIndex = 0;
+  let visibleCards = 4;
+  let stepSize = 0;
+  let isAnimating = false;
+  let autoplayTimer = null;
+
+  const getVisibleCards = () => {
+    if (window.innerWidth <= 640) {
+      return 1;
+    }
+
+    if (window.innerWidth <= 860) {
+      return 2;
+    }
+
+    if (window.innerWidth <= 980) {
+      return 3;
+    }
+
+    return 4;
+  };
+
+  const getStepSize = () => {
+    const firstCard = track.children[0];
+
+    if (!firstCard) {
+      return 0;
+    }
+
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const computed = window.getComputedStyle(track);
+    const gap = parseFloat(computed.columnGap || computed.gap || "0") || 0;
+
+    return cardWidth + gap;
+  };
+
+  const applyTrackTransform = (index) => {
+    track.style.transform = `translate3d(${-index * stepSize}px, 0, 0)`;
+  };
+
+  const setTrackPosition = (index, animated) => {
+    if (animated) {
+      track.classList.remove("is-jump-reset");
+      applyTrackTransform(index);
+      return;
+    }
+
+    track.classList.add("is-jump-reset");
+    applyTrackTransform(index);
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        track.classList.remove("is-jump-reset");
+      });
+    });
+  };
+
+  const updateButtons = () => {
+    const disableArrows = originalCards.length <= visibleCards;
+
+    if (prevButton) {
+      prevButton.disabled = disableArrows;
+    }
+
+    if (nextButton) {
+      nextButton.disabled = disableArrows;
+    }
+  };
+
+  const rebuildTrack = () => {
+    visibleCards = Math.min(getVisibleCards(), originalCards.length);
+    track.innerHTML = "";
+
+    if (originalCards.length <= visibleCards) {
+      originalCards.forEach((card) => {
+        track.appendChild(card.cloneNode(true));
+      });
+      currentIndex = 0;
+      stepSize = getStepSize();
+      setTrackPosition(currentIndex, false);
+      updateButtons();
+      return;
+    }
+
+    const prefix = originalCards.slice(-visibleCards).map((card) => card.cloneNode(true));
+    const suffix = originalCards.slice(0, visibleCards).map((card) => card.cloneNode(true));
+
+    [...prefix, ...originalCards.map((card) => card.cloneNode(true)), ...suffix].forEach((card) => {
+      track.appendChild(card);
+    });
+
+    currentIndex = visibleCards;
+    stepSize = getStepSize();
+    setTrackPosition(currentIndex, false);
+    updateButtons();
+  };
+
+  const goToNext = () => {
+    if (isAnimating || originalCards.length <= visibleCards) {
+      return;
+    }
+
+    isAnimating = true;
+    currentIndex += 1;
+    setTrackPosition(currentIndex, true);
+  };
+
+  const goToPrevious = () => {
+    if (isAnimating || originalCards.length <= visibleCards) {
+      return;
+    }
+
+    isAnimating = true;
+    currentIndex -= 1;
+    setTrackPosition(currentIndex, true);
+  };
+
+  const stopAutoplay = () => {
+    if (autoplayTimer) {
+      window.clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+  };
+
+  const startAutoplay = () => {
+    stopAutoplay();
+
+    if (prefersReducedMotion || originalCards.length <= visibleCards) {
+      return;
+    }
+
+    autoplayTimer = window.setInterval(() => {
+      goToNext();
+    }, 3200);
+  };
+
+  prevButton?.addEventListener("click", () => {
+    goToPrevious();
+    startAutoplay();
+  });
+
+  nextButton?.addEventListener("click", () => {
+    goToNext();
+    startAutoplay();
+  });
+
+  track.addEventListener("transitionend", (event) => {
+    if (event.propertyName !== "transform") {
+      return;
+    }
+
+    if (originalCards.length <= visibleCards) {
+      isAnimating = false;
+      return;
+    }
+
+    const firstRealIndex = visibleCards;
+    const lastRealIndex = visibleCards + originalCards.length - 1;
+    const afterLastCloneIndex = visibleCards + originalCards.length;
+
+    if (currentIndex >= afterLastCloneIndex) {
+      currentIndex = firstRealIndex;
+      setTrackPosition(currentIndex, false);
+    } else if (currentIndex < firstRealIndex) {
+      currentIndex = lastRealIndex;
+      setTrackPosition(currentIndex, false);
+    }
+
+    isAnimating = false;
+  });
+
+  let touchStartX = 0;
+  let touchDeltaX = 0;
+
+  track.addEventListener("touchstart", (event) => {
+    touchStartX = event.touches[0]?.clientX || 0;
+    touchDeltaX = 0;
+    stopAutoplay();
+  }, { passive: true });
+
+  track.addEventListener("touchmove", (event) => {
+    const currentX = event.touches[0]?.clientX || 0;
+    touchDeltaX = currentX - touchStartX;
+  }, { passive: true });
+
+  track.addEventListener("touchend", () => {
+    if (Math.abs(touchDeltaX) > 34) {
+      if (touchDeltaX < 0) {
+        goToNext();
+      } else {
+        goToPrevious();
+      }
+    }
+
+    startAutoplay();
+  });
+
+  leadershipCarousel.addEventListener("mouseenter", stopAutoplay);
+  leadershipCarousel.addEventListener("mouseleave", startAutoplay);
+  leadershipCarousel.addEventListener("focusin", stopAutoplay);
+  leadershipCarousel.addEventListener("focusout", () => {
+    if (!leadershipCarousel.contains(document.activeElement)) {
+      startAutoplay();
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopAutoplay();
+      return;
+    }
+
+    startAutoplay();
+  });
+
+  window.addEventListener("resize", () => {
+    stopAutoplay();
+    isAnimating = false;
+    rebuildTrack();
+    startAutoplay();
+  }, { passive: true });
+
+  rebuildTrack();
+  startAutoplay();
+};
+
 const init = () => {
   heroSection?.classList.add("is-visible");
   setHeaderState();
@@ -424,47 +498,9 @@ const init = () => {
     });
   });
 
-  if (showcaseCards.length) {
-    setShowcaseState(0);
-    updateShowcaseHeight();
-    restartShowcaseTimer();
-
-    prevShowcase?.addEventListener("click", () => {
-      setShowcaseState(showcaseIndex - 1);
-      updateShowcaseHeight();
-      restartShowcaseTimer();
-    });
-
-    nextShowcase?.addEventListener("click", () => {
-      setShowcaseState(showcaseIndex + 1);
-      updateShowcaseHeight();
-      restartShowcaseTimer();
-    });
-
-    showcase?.addEventListener("mouseenter", stopShowcaseTimer);
-    showcase?.addEventListener("mouseleave", restartShowcaseTimer);
-    showcaseTrack?.addEventListener("pointerdown", handleShowcasePointerDown);
-    showcaseTrack?.addEventListener("pointermove", handleShowcasePointerMove);
-    showcaseTrack?.addEventListener("pointerup", handleShowcasePointerUp);
-    showcaseTrack?.addEventListener("pointercancel", handleShowcasePointerCancel);
-    showcaseTrack?.addEventListener("touchstart", handleShowcaseTouchStart, { passive: true });
-    showcaseTrack?.addEventListener("touchmove", handleShowcaseTouchMove, { passive: true });
-    showcaseTrack?.addEventListener("touchend", handleShowcaseTouchEnd, { passive: true });
-
-    showcaseCards.forEach((card) => {
-      card.querySelectorAll("img").forEach((image) => {
-        if (!image.complete) {
-          image.addEventListener("load", updateShowcaseHeight, { once: true });
-        }
-      });
-    });
-
-    window.addEventListener("resize", updateShowcaseHeight, { passive: true });
-    window.addEventListener("load", updateShowcaseHeight, { once: true });
-  }
-
   setupRevealAnimations();
   setupHeroTyping();
+  setupLeadershipCarousel();
   setupContactForm();
 };
 
